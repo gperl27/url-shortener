@@ -1,38 +1,99 @@
-//lets require/import the mongodb native drivers.
-var mongodb = require('mongodb');
+var Url = require('./model/url');
+var validUrl = require('valid-url');
+var path = require('path');
+var port = process.env.PORT || 8080;
+var express = require('express');
+
+
+var mongoose = require('mongoose');
 require('dotenv').config({
     silent: true
 });
+var app = express();
 
-//We need to work with "MongoClient" interface in order to connect to a mongodb server.
-var MongoClient = mongodb.MongoClient;
+mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost/urlshort' );
 
-// Connection URL. This is where your mongodb server is running.
 
-//(Focus on This Variable)
-var url = process.env.MONGOLAB_URI;      
-//(Focus on This Variable)
 
-// Use connect method to connect to the Server
-  MongoClient.connect(url, function (err, db) {
-  if (err) {
-    console.log('Unable to connect to the mongoDB server. Error:', err);
-  } else {
-    console.log('Connection established to database');
+//app.use(express.static(__dirname + '/views'));
 
-    // do some work here with the database.
-    var collection = db.collection('urls');
-    
-    var url1 = { test: 'test' };
-    
-    collection.insert(url1, function(err, result){
-        if (err) {
-            console.log(err);
-        } else {
-            console.log('Inserted docs into the "urls" collection. The docs inserted are: ', result)
-        }
-    })
-    //Close connection
-    db.close();
-  }
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+
+app.get('/', function(req, res){
+    res.render('index');
 });
+
+app.get('/test', function(req, res){
+   res.redirect('http://google.com'); 
+});
+
+app.get('/new/:urlInput(*)', function(req, res){
+    var input = req.params.urlInput;
+    //console.log(req.protocol);
+    //console.log(input);
+    
+    if (validUrl.isWebUri(input)){
+        
+        var newUrl = Url({
+           originalUrl: input,
+           shortUrl: input.shortid
+        });
+        
+  
+        newUrl.save(function(err){
+            if(err) throw err;
+            
+            console.log('user saved successfully');
+        }); 
+        
+        /*
+    
+        
+        Url.find({},  function(err, urls){
+            if (err) throw err;
+            
+            console.log(urls);
+        });  */
+        
+        /*Url.findOne({ shortUrl: 'H11LBViP' },  function(err, url){
+            if (err) throw err;
+            
+            console.log(url.originalUrl);
+            //res.redirect(url.originalUrl);
+        }); */ 
+        
+        res.json({
+            'original': newUrl.originalUrl,
+            'new': newUrl.shortUrl
+        });
+    } else {
+        
+        console.log('not a URI');
+        res.send('Not a valid URI');
+    }
+    
+});
+    
+    app.get('/:short', function(req, res){
+        var short = req.params.short;
+        
+         Url.findOne({ shortUrl: short },  function(err, url){
+            if(err){
+                throw err;
+            } 
+            
+            if(url){
+                console.log(url.originalUrl);
+                res.redirect(url.originalUrl);
+            } else {
+                res.send("No short url in the database");
+            }
+        }); 
+        
+    });
+
+
+app.listen(port, function() {
+    console.log('Listening on port ' + port);
+ });
