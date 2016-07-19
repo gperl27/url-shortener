@@ -2,8 +2,30 @@
 <html>
     <head>
         <title>URL Shortener</title>
+        <link rel="stylesheet prefetch" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     </head>
+    <style type="text/css">
+        #watermark {
+            margin-top: 50px;
+            
+        }
+    </style>
     <body>
-        <h1>Hello world</h1>
+        <div class='container'>
+            <h1>Url Shortener Microservice</h1>
+            <ol>
+                <li>I can pass a URL as a parameter and I will receive a shortened URL in the JSON response.</li>
+                <li>If I pass an invalid URL that doesn't follow the valid http://www.example.com format, the JSON response will contain an error instead.</li>
+                <li>When I visit that shortened URL, it will redirect me to my original link.</li>
+            </ol>
+            <h2>Example Use</h2>
+            <code>https://murmuring-headland-57921.herokuapp.com/new/http://yahoo.com</code>
+            <h3>Returns</h3>
+            <code>{ "url": http://yahoo.com, "new": "12345678" }</code>
+            <h3>Now in your address bar: </h3>
+            <code>https://murmuring-headland-57921.herokuapp.com/12345678</code>
+            <h3>Should redirect you to the external link you created</h3>
+            <p id='watermark'>By Greg Perlman</p>
+        </div>
     </body>
 </html>

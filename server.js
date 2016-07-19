@@ -47,22 +47,6 @@ app.get('/new/:urlInput(*)', function(req, res){
             console.log('user saved successfully');
         }); 
         
-        /*
-    
-        
-        Url.find({},  function(err, urls){
-            if (err) throw err;
-            
-            console.log(urls);
-        });  */
-        
-        /*Url.findOne({ shortUrl: 'H11LBViP' },  function(err, url){
-            if (err) throw err;
-            
-            console.log(url.originalUrl);
-            //res.redirect(url.originalUrl);
-        }); */ 
-        
         res.json({
             'original': newUrl.originalUrl,
             'new': newUrl.shortUrl
