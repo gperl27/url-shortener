@@ -20,8 +20,12 @@ app.get('/', function(req, res){
     res.render('index');
 });
 
-app.get('/new/*', function(req, res){
-    var input = 'http://' + req.url.slice(5);
+app.get('/test', function(req, res){
+   res.redirect('http://google.com'); 
+});
+
+app.get('/new/:urlInput(*)', function(req, res){
+    var input = req.params.urlInput;
     //console.log(req.protocol);
     //console.log(input);
     
@@ -76,7 +80,7 @@ app.get('/new/*', function(req, res){
             } 
             
             if(url){
-                console.log(url);
+                console.log(url.originalUrl);
                 res.redirect(301, url.originalUrl);
             } else {
                 res.send("No short url in the database");
