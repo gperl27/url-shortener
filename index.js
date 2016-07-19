@@ -1,6 +1,6 @@
 var Url = require('./model/url');
 var validUrl = require('valid-url');
-
+var path = require('path');
 var port = process.env.PORT || 8080;
 var express = require('express');
 
@@ -9,12 +9,16 @@ var mongoose = require('mongoose');
 require('dotenv').config({
     silent: true
 });
+var app = express();
 
 mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost/urlshort' );
 
-var app = express();
 
-app.use(express.static(__dirname + '/views'));
+
+//app.use(express.static(__dirname + '/views'));
+
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
 app.get('/', function(req, res){
     res.render('index');
@@ -81,7 +85,7 @@ app.get('/new/:urlInput(*)', function(req, res){
             
             if(url){
                 console.log(url.originalUrl);
-                res.redirect(301, url.originalUrl);
+                res.redirect(url.originalUrl);
             } else {
                 res.send("No short url in the database");
             }
